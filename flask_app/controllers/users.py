@@ -48,17 +48,17 @@ def login():
 
     return redirect('/dashboard')
 
-@app.route('/user/account')
-def user_account():
-    if 'user_id' not in session:
-        return redirect('/')
-    data = {
-        "id": session['user_id']
-    }
-    current_user = User.get_user_by_id(data)
-    movies = Movie.get_users_magazines(data)
+# @app.route('/user/account')
+# def user_account():
+#     if 'user_id' not in session:
+#         return redirect('/')
+#     data = {
+#         "id": session['user_id']
+#     }
+#     current_user = User.get_user_by_id(data)
+#     movies = Movie.get_users_movies(data)
 
-    return render_template('account.html', user=current_user, movies=movies)
+#     return render_template('account.html', user=current_user, movies=movies)
 
 
 @app.route('/logout')
