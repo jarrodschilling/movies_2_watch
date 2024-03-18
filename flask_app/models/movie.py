@@ -3,11 +3,11 @@ from flask import flash
 from flask_app.models import user
 
 class Movie:
-    db = "belt_exam_schema"
+    db = "movies_two_watch_schema"
     def __init__(self, data):
         self.id = data['id']
         self.title = data['title']
-        self.description = data['friend']
+        self.friend = data['friend']
         self.date = data['date']
         self.watched = data['watched']
         self.user_id = data['user_id']

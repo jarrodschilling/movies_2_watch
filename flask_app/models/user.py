@@ -4,7 +4,7 @@ import re
 
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 class User:
-    db = "my_breadth_schema"
+    db = "movies_two_watch_schema"
     def __init__(self, data):
         self.id = data['id']
         self.first_name = data['first_name']
@@ -45,45 +45,41 @@ class User:
 
     @classmethod
     def get_all(cls):
-        query = "SELECT * FROM emails;"
+        query = "SELECT * FROM users;"
         results = connectToMySQL(cls.db).query_db(query)
+        if not results:
+            return False
         emails = []
         for row in results:
             emails.append(cls(row))
-        return(emails)
+        return emails
 
 
     @staticmethod
     def validate_reg(user):
         is_valid = True
         if len(user['first_name']) < 1:
-            flash("First name cannot be blank")
+            flash("First name cannot be blank", 'reg')
             is_valid = False
         if not EMAIL_REGEX.match(user['email']):
             flash("Invalid email format", 'reg')
             is_valid = False
-        if len(user['password']) < 8:
-            flash("Password must be at least 8 character long")
+        if len(user['password']) < 4:
+            flash("Password must be at least 8 character long", 'reg')
             is_valid = False
-        if user['password'] != user['confirmpassword']:
-            flash("Passwords must match")
-            is_valid = False
-        if any(char.isdigit() for char in user['password']) == False:
-            flash("Password must contain a number")
-            is_valid = False
-        if any(char.isalpha() for char in user['password']) == False:
-            flash("Password must contain a letter")
-            is_valid = False
-        if any(char for char in user['password'] if not char.isalnum()) == False:
-            flash("Password must contain a special character")
+        if user['password'] != user['confirm_password']:
+            flash("Passwords must match", 'reg')
             is_valid = False
         # check to see if email already exists
         users = User.get_all()
         emails = []
-        for row in users:
-            emails.append(row.email)
-        if user['email'] in emails:
-            flash("Email already exists")
-            is_valid = False
+        if users:
+            for row in users:
+                emails.append(row.email)
+            if user['email'] in emails:
+                print(user['email'])
+                print(emails)
+                flash("Email already exists", 'reg')
+                is_valid = False
 
         return is_valid
