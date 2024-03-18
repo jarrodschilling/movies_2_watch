@@ -2,6 +2,7 @@ from flask import Flask, render_template, redirect, request, session, flash
 from flask_app import app
 from flask_app.models.movie import Movie
 from flask_app.models.user import User
+from flask_app.static.utils.helpers import api_call
 
 
 @app.route('/dashboard')
@@ -12,7 +13,11 @@ def show_all():
         'users_id': session['user_id']
     }
     movies = Movie.get_users_movies(data)
-    return render_template('dashboard.html', movies=movies)
+    display_movies = []
+    for movie in movies:
+        store_movie = api_call(movie.title)
+        display_movies.append(store_movie)
+    return render_template('dashboard.html', movies=movies, display_movies=display_movies)
 
 
 @app.route('/movies/new')
