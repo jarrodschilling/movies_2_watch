@@ -10,7 +10,7 @@ class Movie:
         self.friend = data['friend']
         self.date = data['date']
         self.watched = data['watched']
-        self.user_id = data['user_id']
+        self.users_id = data['users_id']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
         self.movie_user = None
@@ -18,28 +18,25 @@ class Movie:
 
     @classmethod
     def save_movie(cls, data):
-        query = """INSERT INTO movies (title, friend, date, watched)
+        query = """INSERT INTO movies (title, friend, date, watched, users_id)
                 VALUES (%(title)s, %(friend)s, %(date)s, %(watched)s, %(user_id)s);"""
         return connectToMySQL(cls.db).query_db(query, data)
     
     @classmethod
     def get_one_movie_by_id(cls, data):
-        query = """SELECT * FROM magazines WHERE id = %(id)s;"""
+        query = """SELECT * FROM movies WHERE id = %(id)s;"""
         results = connectToMySQL(cls.db).query_db(query, data)
         if not results:
             return False
         return cls(results[0])
-    
-
-
-    
 
     @classmethod
     def get_users_movies(cls, data):
-        query = """SELECT * FROM movies
-                WHERE user_id = %(id)s;"""
+        # print(data)
+        query = """SELECT * FROM movies WHERE users_id = %(users_id)s;"""
         results = connectToMySQL(cls.db).query_db(query, data)
         movies = []
+        # print(results)
         if results:
             for row in results:
                 a_movie = cls(row)
@@ -54,7 +51,7 @@ class Movie:
 
     @classmethod
     def update_movie(cls, data):
-        query = """UPDATE movies SET name = %(title)s, friend = %(friend)s,
+        query = """UPDATE movies SET title = %(title)s, friend = %(friend)s,
                 date = %(date)s, watched = %(watched)s 
                 WHERE id = %(id)s;"""
         return connectToMySQL(cls.db).query_db(query, data)
@@ -71,27 +68,27 @@ class Movie:
             return False
         return cls(results[0])
 
-    @classmethod
-    def get_all(cls):
-        query = """SELECT * FROM movies
-                JOIN users ON users.id = movies.user_id;"""
-        results = connectToMySQL(cls.db).query_db(query)
-        movies = []
-        if results:
-            for row in results:
-                one_movie = cls(row)
-                movie_user_data = {
-                    'id': row['users.id'],
-                    'first_name': row['first_name'],
-                    'last_name': row['last_name'],
-                    'email': row['email'],
-                    'password': row['password'],
-                    'created_at': row['users.created_at'],
-                    'updated_at': row['users.updated_at']
-                }
-                one_movie.movie_user = user.User(movie_user_data)
-                movies.append(one_movie)
-        return movies
+    # @classmethod
+    # def get_all(cls):
+    #     query = """SELECT * FROM movies
+    #             JOIN users ON users.id = movies.user_id;"""
+    #     results = connectToMySQL(cls.db).query_db(query)
+    #     movies = []
+    #     if results:
+    #         for row in results:
+    #             one_movie = cls(row)
+    #             movie_user_data = {
+    #                 'id': row['users.id'],
+    #                 'first_name': row['first_name'],
+    #                 'last_name': row['last_name'],
+    #                 'email': row['email'],
+    #                 'password': row['password'],
+    #                 'created_at': row['users.created_at'],
+    #                 'updated_at': row['users.updated_at']
+    #             }
+    #             one_movie.movie_user = user.User(movie_user_data)
+    #             movies.append(one_movie)
+    #     return movies
     
     
     @staticmethod
