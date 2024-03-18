@@ -23,7 +23,7 @@ def register():
         'password': pw_hash
     }
 
-    user_id = User.save_one(data)
+    user_id = User.save(data)
     session['user_id'] = user_id
     session['first_name'] = request.form['first_name']
 
@@ -31,7 +31,10 @@ def register():
 
 @app.route('/login', methods=['POST'])
 def login():
-    user_in_db  = User.get_one(request.form['email'])
+    data = {
+        'email': request.form['email']
+    }
+    user_in_db  = User.get_one(data)
 
     if not user_in_db:
         flash('Invalid Email/Password', 'login')

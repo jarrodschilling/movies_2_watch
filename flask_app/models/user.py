@@ -19,7 +19,10 @@ class User:
     def save(cls, data):
         query = """INSERT INTO users (first_name, email, password)
                 VALUES (%(first_name)s, %(email)s, %(password)s);"""
-        return connectToMySQL(cls.db).query_db(query, data)
+        results = connectToMySQL(cls.db).query_db(query, data)
+        if not results:
+            return False
+        return results
     
 
     @classmethod
@@ -74,7 +77,7 @@ class User:
         if any(char for char in user['password'] if not char.isalnum()) == False:
             flash("Password must contain a special character")
             is_valid = False
-        # check to see if username already exists
+        # check to see if email already exists
         users = User.get_all()
         emails = []
         for row in users:
