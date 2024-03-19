@@ -16,6 +16,7 @@ def show_all():
     display_movies = []
     for movie in movies:
         store_movie = api_call(movie.title)
+        store_movie['db_id'] = movie.id
         display_movies.append(store_movie)
     return render_template('dashboard.html', movies=movies, display_movies=display_movies)
 
@@ -55,7 +56,9 @@ def get_one_movie(id):
         'id': id
     }
     movie = Movie.get_one_movie_by_id(data)
-    return render_template('movie.html', movie=movie)
+    display_movie = api_call(movie.title)
+    display_movie['db_id'] = movie.id
+    return render_template('movie.html', movie=movie, display_movie=display_movie)
 
 
 @app.route("/movies/edit/<int:id>")

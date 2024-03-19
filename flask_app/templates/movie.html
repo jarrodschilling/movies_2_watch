@@ -28,12 +28,21 @@
     <div class="container">
         <div class="col-6 js-reg">
             <div class="js-magazine">
-                <h4>Friend Rec {{movie.friend}}</h4>
+                <h5>Recommended By: {{movie.friend}}</h5>
+                <h5>Date Recommended: {{movie.date.strftime("%m/%d/%Y")}}</h5>
+                {% if movie.watched == 1%}
+                <h5>Watched: Yes</h5>
+                {% else %}
+                <h5>Watched: No</h5>
+                {% endif %}
                 <br>
-                <h4>Date:</h4>
-                <p>{{movie.date}}</p>
-                <h4>Watched:</h4>
-                <p>{{movie.watched}}</p>
+                <img src="{{display_movie.poster}}">
+                <p>Starring: {{display_movie.actors}}</p>
+                <p>Year: {{display_movie.year}}</p>
+                <p>Genre: {{display_movie.genre}}</p>
+                <p> Plot: {{display_movie.plot}}</p>
+                <p>IMDB Rating: {{display_movie.ratings}}</p>
+
             </div>
         </div>
     </div>  

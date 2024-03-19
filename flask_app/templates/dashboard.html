@@ -30,10 +30,10 @@
         <div class="col-5 js-dashboard">
             <table class="table">
                 <tbody>
-                    {% for movie in movies %}
+                    {% for movie in display_movies %}
                     <tr>
                         <td>
-                            <a href="/movies/{{movie.id}}">{{movie.title}}</a>
+                            <a href="/movies/{{movie.db_id}}">{{movie.title}} {{movie.actors}}</a>
                         </td>
                     </tr>
                     {% endfor %}
