@@ -33,7 +33,16 @@
                     {% for movie in display_movies %}
                     <tr>
                         <td>
-                            <a href="/movies/{{movie.db_id}}">{{movie.title}} {{movie.actors}}</a>
+                            <a href="/movies/{{movie.db_id}}">{{movie.title}}</a>
+                            <p>{{movie.db_friend}}</p>
+                            <p>{{movie.db_date}}</p>
+                            {% if movie.db_watched == 1%}
+                            <p>YES</p>
+                            {% else %}
+                            <p>NO</p>
+                            {% endif %}
+                            <a href="{{ url_for('delete_movie', id=movie.db_id) }}"> DELETE</a>
+                            <a href="{{ url_for('update_movie_page', id=movie.db_id) }}"> | EDIT</a>
                         </td>
                     </tr>
                     {% endfor %}

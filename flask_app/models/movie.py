@@ -67,28 +67,6 @@ class Movie:
         if not results:
             return False
         return cls(results[0])
-
-    # @classmethod
-    # def get_all(cls):
-    #     query = """SELECT * FROM movies
-    #             JOIN users ON users.id = movies.user_id;"""
-    #     results = connectToMySQL(cls.db).query_db(query)
-    #     movies = []
-    #     if results:
-    #         for row in results:
-    #             one_movie = cls(row)
-    #             movie_user_data = {
-    #                 'id': row['users.id'],
-    #                 'first_name': row['first_name'],
-    #                 'last_name': row['last_name'],
-    #                 'email': row['email'],
-    #                 'password': row['password'],
-    #                 'created_at': row['users.created_at'],
-    #                 'updated_at': row['users.updated_at']
-    #             }
-    #             one_movie.movie_user = user.User(movie_user_data)
-    #             movies.append(one_movie)
-    #     return movies
     
     
     @staticmethod
@@ -98,10 +76,13 @@ class Movie:
             flash("Title must be at least 2 characters")
             is_valid = False
         if len(data['friend']) < 2:
-            flash("Friend must be at least 10 characters")
+            flash("Friend must be at least 2 characters")
             is_valid = False
-        if Movie.get_by_title(data['title']) != False:
-            flash("Title already exists")
+        # if Movie.get_by_title(data['title']) != False:
+        #     flash("Title already exists")
+        #     is_valid = False
+        if not data['date']:
+            flash("Date required")
             is_valid = False
 
         return is_valid

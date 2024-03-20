@@ -5,6 +5,7 @@ from flask_app.models.user import User
 from flask_app.static.utils.helpers import api_call
 
 
+# Home page after login - displays all users movies
 @app.route('/dashboard')
 def show_all():
     if 'user_id' not in session:
@@ -17,22 +18,29 @@ def show_all():
     for movie in movies:
         store_movie = api_call(movie.title)
         store_movie['db_id'] = movie.id
+        store_movie['db_friend'] = movie.friend
+        store_movie['db_date'] = movie.date
+        store_movie['db_watched'] = movie.watched
         display_movies.append(store_movie)
     return render_template('dashboard.html', movies=movies, display_movies=display_movies)
 
 
+# ------------------------ADD NEW MOVIE---------------------------------
+
+# GET REQUEST (landing page) to add new movie
 @app.route('/movies/new')
 def new_movie():
     if 'user_id' not in session:
         return redirect('/')
     return render_template('new-movie.html')
 
+# POST REQUEST (submit) to add new movie
 @app.route('/movies/create', methods=['POST'])
 def create_movie():
     if 'user_id' not in session:
         return redirect('/')
-    # if not Movie.validate_movie(request.form):
-    #     return redirect('/movies/new')
+    if not Movie.validate_movie(request.form):
+        return redirect('/movies/new')
 
     print(request.form.get('watched'))
 
@@ -48,6 +56,7 @@ def create_movie():
     return redirect('/dashboard')
 
 
+# ------------------------MOVIE DETAIL---------------------------------
 @app.route('/movies/<int:id>')
 def get_one_movie(id):
     if 'user_id' not in session:
@@ -61,8 +70,11 @@ def get_one_movie(id):
     return render_template('movie.html', movie=movie, display_movie=display_movie)
 
 
+# ------------------------UPDATE/EDIT MOVIE---------------------------------
+
+# GET REQUEST (landing page) to update movie
 @app.route("/movies/edit/<int:id>")
-def update_recipe_page(id):
+def update_movie_page(id):
     if 'user_id' not in session:
         return redirect('/')
     data = {
@@ -71,12 +83,15 @@ def update_recipe_page(id):
     movie = Movie.get_one_movie_by_id(data)
     return render_template('edit.html', movie=movie)
 
-
+# POST REQUEST (submit) to update movie
 @app.route("/movies/update", methods=['POST'])
-def update_recipe():
+def update_movie():
     print(request.form)
     if 'user_id' not in session:
         return redirect('/')
+    check_id = request.form['id']
+    if not Movie.validate_movie(request.form):
+        return redirect(f'/movies/edit/{check_id}')
     data = {
         'id': request.form['id'],
         'title': request.form['title'],
@@ -85,15 +100,17 @@ def update_recipe():
         'watched': request.form.get('watched'),
     }
 
-    recipe_update = Movie.update_movie(data)
+    movie_update = Movie.update_movie(data)
     return redirect('/dashboard')
 
+
+# ------------------------DELETE MOVIE---------------------------------
 @app.route("/movies/delete/<int:id>")
-def delete_recipe(id):
+def delete_movie(id):
     if 'user_id' not in session:
         return redirect('/')
     data = {
         'id': id
     }
     Movie.delete_movie(data)
-    return redirect('/user/account')
+    return redirect('/dashboard')

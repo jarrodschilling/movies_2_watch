@@ -6,36 +6,52 @@ from flask_bcrypt import Bcrypt
 bcrypt = Bcrypt(app)
 
 
+# ------------------------USER LOGIN/REGISTRATION---------------------------------
+
+# INDEX PAGE for login/registration
 @app.route('/')
 def home():
     return render_template('index.html')
 
-
+# Register new user
 @app.route('/register', methods=['POST'])
 def register():
+    # Validate form data and display errors
     if not User.validate_reg(request.form):
         return redirect('/')
     
+    # Hash password before storing
     pw_hash = bcrypt.generate_password_hash(request.form['password'])
+
+    # Data sterilization
     data = {
         'first_name': request.form['first_name'],
         'email': request.form['email'],
         'password': pw_hash
     }
 
+    # Save user to database and get id
     user_id = User.save(data)
+
+    #Store session id and first name
     session['user_id'] = user_id
     session['first_name'] = request.form['first_name']
 
     return redirect('/dashboard')
 
+
+# LOGIN
 @app.route('/login', methods=['POST'])
 def login():
+    # Data sterilization
     data = {
         'email': request.form['email']
     }
+    
+    # Grab user id
     user_in_db  = User.get_one(data)
 
+    # Check for user login validation
     if not user_in_db:
         flash('Invalid Email/Password', 'login')
         return redirect('/')
@@ -43,24 +59,14 @@ def login():
         flash('Invalid Email/Password', 'login')
         return redirect('/')
     
+    #Store session id and first name
     session['user_id'] = user_in_db.id
     session['first_name'] = user_in_db.first_name
 
     return redirect('/dashboard')
 
-# @app.route('/user/account')
-# def user_account():
-#     if 'user_id' not in session:
-#         return redirect('/')
-#     data = {
-#         "id": session['user_id']
-#     }
-#     current_user = User.get_user_by_id(data)
-#     movies = Movie.get_users_movies(data)
 
-#     return render_template('account.html', user=current_user, movies=movies)
-
-
+# LOGOUT USER
 @app.route('/logout')
 def logout():
     session.clear()
